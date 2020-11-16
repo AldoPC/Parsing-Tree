@@ -1,7 +1,11 @@
 
-tree = {}
-print('Que archivo desea abrir? (test1, test2, etc')
+productions = {}
+print('¿Que archivo desea abrir? (test1, test2, etc')
 fname = input()
+print('¿Cual es el string a evaluar?')
+p = input()
+print('¿Cual es la profundiddad?')
+desireDepth = input()
 fname = fname + '.txt'
 count = 0
 with open(fname, 'r') as f:
@@ -25,15 +29,32 @@ with open(fname, 'r') as f:
         temp[len(temp)-1] = temp[len(temp)-1].strip()
         key = temp[0]
         value = temp[1]
-        if key in tree.keys():
-            tree[key].append(value)
+        if key in productions.keys():
+            productions[key].append(value)
         else:
-            tree[key] = []
-            tree[key].append(value)
+            productions[key] = []
+            productions[key].append(value)
 
 print(nonTerminalSymbols)
 print(terminalSymbols)
 print(startSymbol)
-print(tree)
+print(productions)
 
-    
+def parsingTree(productions):
+    Q = []
+    Q.append(startSymbol)
+    depth = 0
+    uwv = ""
+    while Q and depth != desireDepth and p != uwv:
+        q = Q.pop(0)
+        i = 0
+        done = False
+        A = ''
+        for x in q:
+            if x.isupper():
+                A = x
+                break
+
+        while not done and p != uwv:
+            rules = productions[A]
+            for rule in rules:
