@@ -1,5 +1,7 @@
 
 productions = {}
+depth_log = {}
+tree = {}
 print('¿Que archivo desea abrir? (test1, test2, etc')
 fname = input()
 print('¿Cual es el string a evaluar?')
@@ -35,26 +37,59 @@ with open(fname, 'r') as f:
             productions[key] = []
             productions[key].append(value)
 
-print(nonTerminalSymbols)
-print(terminalSymbols)
-print(startSymbol)
-print(productions)
-
-def parsingTree(productions):
+def parsingTree(desireDepth, p):
     Q = []
     Q.append(startSymbol)
-    depth = 0
     uwv = ""
-    while Q and depth != desireDepth and p != uwv:
+    depth_log[startSymbol] = 0
+    while Q and p != uwv:
         q = Q.pop(0)
-        i = 0
+        if depth_log[q] == int(desireDepth):
+            break
         done = False
-        A = ''
-        for x in q:
-            if x.isupper():
-                A = x
+        for x in range(len(q)):
+            if q[x].isupper():
+                partsOfNode = q.partition(q[x])
                 break
-
         while not done and p != uwv:
-            rules = productions[A]
-            for rule in rules:
+            process = productions[partsOfNode[1]]
+            for w in process:
+                uwv = ""
+                u = partsOfNode[0]
+                v = partsOfNode[2]
+                uwv += u + w + v
+                isItTerminal = False
+                for x in uwv:
+                    if x.isupper():
+                        isItTerminal = True
+                        break
+                isTherePrefix = True
+                for x in range(len(u)):
+                    if x < len(p) and u[x] != p[x]:
+                        isTherePrefix = False
+                        break
+                if isItTerminal and isTherePrefix:
+                    if q in tree.keys():
+                        tree[q].append(uwv)
+                    else:
+                        tree[q] = []
+                        tree[q].append(uwv)
+                    depth_log[uwv] = depth_log[q] + 1
+                    Q.append(uwv)
+                if not isItTerminal and isTherePrefix:
+                    if q in tree.keys():
+                        tree[q].append(uwv)
+                    else:
+                        tree[q] = []
+                        tree[q].append(uwv)
+                    depth_log[uwv] = depth_log[q] + 1
+            done = True
+    if uwv == p:
+        print(tree)
+    else:
+        print("No se pudo procesar el string")
+        print(tree)
+parsingTree(desireDepth, p)
+
+
+
