@@ -1,12 +1,27 @@
+"""Parsing Tree Builder
+
+This script allows the user to process a string with a desire depth
+in which the tree will be built.
+
+This tool accepts text documents (.txt).
+
+This script requires that `anytree` be installed within the Python
+environment you are running this script in.
+
+This file contains the following funcitons:
+
+    * parsingTree - builds a dictionary of the tree when its processing the string.
+    * printTree - builds the tree to be displayed in the console.
+"""
 from anytree import Node, RenderTree
 productions = {}
 depth_log = {}
 tree = {}
-print('¿Que archivo desea abrir? (test1, test2, etc)')
+print('Which .txt file? (test1, test2, etc)')
 fname = input()
-print('¿Cual es el string a evaluar?')
+print('Which string are you evaluating?')
 p = input()
-print('¿Cual es la profundiddad?')
+print('Until which depth?')
 desireDepth = input()
 fname = fname + '.txt'
 count = 0
@@ -38,18 +53,43 @@ with open(fname, 'r') as f:
             productions[key].append(value)
 
 def printTree(key, parent):
+    """Gets the parent node and add its correspondig child
+
+    Parameters
+    ----------
+    key : str
+        the value of the child
+    parent : node
+        the parent node which is going to have the key value as a child
+
+    Returns
+    -------
+    list
+        a list of strings used that are the header columns
+    """
     for x in tree:
         for y in tree[x]:
             if x == key:
                 node = Node(y, parent=parent)
                 printTree(y,node)
 
-def parsingTree(desireDepth, p):
+def parsingTree():
+    """Builds a dictionary of the tree when its processing the string 
+
+    Parameters
+    ----------
+    
+
+    Returns
+    -------
+    
+    """
     Q = []
     Q.append(startSymbol)
     uwv = ""
     depth_log[startSymbol] = 0
-    while Q and p != uwv:
+    match = False
+    while Q and not match:
         q = Q.pop(0)
         if depth_log[q] == int(desireDepth):
             break
@@ -58,7 +98,7 @@ def parsingTree(desireDepth, p):
             if q[x].isupper():
                 partsOfNode = q.partition(q[x])
                 break
-        while not done and p != uwv:
+        while not done and not match:
             process = productions[partsOfNode[1]]
             for w in process:
                 u = partsOfNode[0]
@@ -82,6 +122,8 @@ def parsingTree(desireDepth, p):
                         tree[q].append(uwv)
                     depth_log[uwv] = depth_log[q] + 1
                     Q.append(uwv)
+                    if uwv == p:
+                        match = True
                 if not isItTerminal and isTherePrefix:
                     if q in tree.keys():
                         tree[q].append(uwv)
@@ -89,18 +131,16 @@ def parsingTree(desireDepth, p):
                         tree[q] = []
                         tree[q].append(uwv)
                     depth_log[uwv] = depth_log[q] + 1
+                    if uwv == p:
+                        match = True
             done = True
-    if uwv == p:
-        print("Se pudo procesar el string")
+    if match:
+        print("The string was accepted")
     else:
-        print("No se pudo procesar el string")
-    initialNode = Node(startSymbol)
-    printTree(startSymbol, initialNode)
-    for pre, fill, node in RenderTree(initialNode):
+        print("The string was not accepted")
+    root = Node(startSymbol)
+    printTree(startSymbol, root)
+    for pre, fill, node in RenderTree(root):
         print("%s%s" % (pre, node.name))
 
-parsingTree(desireDepth, p)
-
-
-
-
+parsingTree()
