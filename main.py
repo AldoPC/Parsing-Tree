@@ -1,8 +1,8 @@
-
+from anytree import Node, RenderTree
 productions = {}
 depth_log = {}
 tree = {}
-print('¿Que archivo desea abrir? (test1, test2, etc')
+print('¿Que archivo desea abrir? (test1, test2, etc)')
 fname = input()
 print('¿Cual es el string a evaluar?')
 p = input()
@@ -37,6 +37,13 @@ with open(fname, 'r') as f:
             productions[key] = []
             productions[key].append(value)
 
+def printTree(key, parent):
+    for x in tree:
+        for y in tree[x]:
+            if x == key:
+                node = Node(y, parent=parent)
+                printTree(y,node)
+
 def parsingTree(desireDepth, p):
     Q = []
     Q.append(startSymbol)
@@ -54,10 +61,9 @@ def parsingTree(desireDepth, p):
         while not done and p != uwv:
             process = productions[partsOfNode[1]]
             for w in process:
-                uwv = ""
                 u = partsOfNode[0]
                 v = partsOfNode[2]
-                uwv += u + w + v
+                uwv = u + w + v
                 isItTerminal = False
                 for x in uwv:
                     if x.isupper():
@@ -85,11 +91,16 @@ def parsingTree(desireDepth, p):
                     depth_log[uwv] = depth_log[q] + 1
             done = True
     if uwv == p:
-        print(tree)
+        print("Se pudo procesar el string")
     else:
         print("No se pudo procesar el string")
-        print(tree)
+    initialNode = Node(startSymbol)
+    printTree(startSymbol, initialNode)
+    for pre, fill, node in RenderTree(initialNode):
+        print("%s%s" % (pre, node.name))
+
 parsingTree(desireDepth, p)
+
 
 
 
