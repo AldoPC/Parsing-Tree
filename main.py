@@ -62,10 +62,9 @@ def printTree(key, parent):
     parent : node
         the parent node which is going to have the key value as a child
 
-    Returns
+    Does
     -------
-    list
-        a list of strings used that are the header columns
+    builds the tree in the anytree library
     """
     for x in tree:
         for y in tree[x]:
@@ -74,15 +73,16 @@ def printTree(key, parent):
                 printTree(y,node)
 
 def parsingTree():
-    """Builds a dictionary of the tree when its processing the string 
+    """Builds a dictionary of the tree when its processing the string
+        using the algorithm seen in class 
 
     Parameters
     ----------
-    
+    None, since all of the variables it needs are global
 
-    Returns
+    Does
     -------
-    
+    Builds the dictionary that contains the parent and its keys
     """
     Q = []
     Q.append(startSymbol)
